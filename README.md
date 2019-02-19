@@ -9,3 +9,165 @@ git clone https://github.com/glenster75/CourtDev2019.git
 cd .\CourtDev2019\
 ls
 code .
+
+VS Code because when you hit “ctrl+`" or go to View -> Terminal in the menu bar and you would see a terminal right inside 
+
+dotnet new sln -n <solutin name>
+
+dotnet new -l
+dotnet new webapi -o <project name>
+
+dotnet sln <solution name> add <project folder>/<project name>.csproj
+
+ng new CourtDevWeb --defaults=false --directory=CourtDev.Web --minimal=true --prefix=cd --routing=true --skipGit=true --skipTests=true --style=scss
+
+cd <project name>
+
+mv src client-src
+
+open .gitignore
+add wwwroot
+
+open angular.json
+replace all src/ to client-src/
+replace "outputPath": "dist/CourtDevWeb", to "outputPath": "wwwroot",
+
+ng serve
+ng build
+
+ls wwwroot
+
+npm install bootstrap jquery popper
+
+angular.json
+style add
+"node_modules/bootstrap/dist/css/bootstrap.min.css"
+
+ng generate component navbar
+ng g c navbar
+
+THIS:
+creates a sub folder inside the app folder with the component name e.g Navbar
+creates the component html template file e.g navbar.component.html
+creates the component stylesheet file e.g navbar.component.scss
+creates the typescript logic file for the component e.g navbar.component.ts
+updates the app module file signalling there is a new component generated.
+
+ng g c home
+ng g c secure
+
+open app-routing.module.ts
+// in the import section add this
+import { HomeComponent } from './home/home.component';
+import { SecureComponent } from './secure/secure.component';
+
+// update the route array with these
+const routes: Routes = [
+  {path: 'home', component: HomeComponent},
+  {path: 'secure', component: SecureComponent},
+  { path: '', redirectTo: '/home', pathMatch: 'full'},
+  { path: '**', component: HomeComponent }
+];
+
+Open app.component.ts
+remove template line replace with:
+templateUrl: './app.component.html'
+create that file with:
+<cd-navbar></cd-navbar>
+<router-outlet></router-outlet>
+
+navbar.component.html:
+// replace everything in this file with this
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <a class="navbar-brand" routerLink="/home">CourtDev 2019</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+      <div class="navbar-nav">
+          <a class="nav-item nav-link" routerLinkActive="['active']" routerLink="/home">Home <span class="sr-only">(current)</span></a>
+          <a class="nav-item nav-link" routerLinkActive="['active']" routerLink="/secure">Secure <span class="sr-only">(current)</span></a>
+        </div>
+    </div>
+  </nav>
+
+home.componenet.html
+<div style="text-align:center">
+  <h1>
+    Welcome to {{ title }}!
+  </h1>
+  <img width="300" alt="Angular Logo" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNTAgMjUwIj4KICAgIDxwYXRoIGZpbGw9IiNERDAwMzEiIGQ9Ik0xMjUgMzBMMzEuOSA2My4ybDE0LjIgMTIzLjFMMTI1IDIzMGw3OC45LTQzLjcgMTQuMi0xMjMuMXoiIC8+CiAgICA8cGF0aCBmaWxsPSIjQzMwMDJGIiBkPSJNMTI1IDMwdjIyLjItLjFWMjMwbDc4LjktNDMuNyAxNC4yLTEyMy4xTDEyNSAzMHoiIC8+CiAgICA8cGF0aCAgZmlsbD0iI0ZGRkZGRiIgZD0iTTEyNSA1Mi4xTDY2LjggMTgyLjZoMjEuN2wxMS43LTI5LjJoNDkuNGwxMS43IDI5LjJIMTgzTDEyNSA1Mi4xem0xNyA4My4zaC0zNGwxNy00MC45IDE3IDQwLjl6IiAvPgogIDwvc3ZnPg==">
+</div>
+
+stop serve
+ng build --watch
+
+new terminal
+dotnet add package Microsoft.AspNetCore.StaticFiles
+
+Startup.cs
+app.UseDefaultFiles();
+app.UseStaticFiles();
+app.UseFileServer();
+
+npm install @azure/msal-angular --save
+
+app.module.ts:
+import { MsalModule } from "@azure/msal-angular";
+import { MsalInterceptor } from "@azure/msal-angular";
+import { LogLevel } from 'msal';
+import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
+
+export function loggerCallback(logLevel, message, piiEnabled) {
+    console.log("client logging" + message);
+}
+export const protectedResourceMap: [string, string[]][] = [
+    ['https://graph.microsoft.com/v1.0/me', ['user.read']]
+];
+// imports
+imports: [
+    ...
+    HttpClientModule,
+    MsalModule.forRoot({
+        clientID: '00000000-0000-0000-0000-000000000000',
+        authority: "https://login.microsoftonline.com/common/",
+        validateAuthority: true,
+        redirectUri: window.location.origin,
+        cacheLocation: 'localStorage',
+        postLogoutRedirectUri: window.location.origin,
+        navigateToLoginRequestUrl: false,
+        popUp: false,
+        unprotectedResources: ["https://www.microsoft.com/en-us/"],
+        protectedResourceMap: protectedResourceMap,
+        logger: loggerCallback,
+        correlationId: "1000",
+        level: LogLevel.Info,
+        piiLoggingEnabled: true
+    })
+    ....
+],
+providers: [
+    {provide: HTTP_INTERCEPTORS, useClass: MsalInterceptor, multi: true}
+    ],
+
+app.component.ts
+constructor() {
+  this.isIframe = window !== window.parent && !window.opener;
+}
+
+app.componenent.html
+<router-outlet *ngIf="!isIframe"></router-outlet>
+
+npm i rxjs-compat
+
+nav
+ <ul class="nav navbar-nav navbar-right">
+        <li><a  *ngIf="!loggedIn"   (click)="login()"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
+        <li><a  *ngIf="loggedIn" (click)="logout()"><span class="glyphicon glyphicon-log-out"></span> Logout</a></li>
+      </ul>
+
+Route:
+import { MsalGuard } from '@azure/msal-angular';
+
+  {path: 'secure', component: SecureComponent, canActivate: [MsalGuard]},
+
