@@ -171,3 +171,27 @@ import { MsalGuard } from '@azure/msal-angular';
 
   {path: 'secure', component: SecureComponent, canActivate: [MsalGuard]},
 
+Startup.cs
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.AzureAD.UI;
+line 30:
+            services.AddAuthentication(AzureADDefaults.BearerAuthenticationScheme)
+                .AddAzureADBearer(options => Configuration.Bind("AzureAd", options));
+line 50:
+app.UseAuthentication();
+
+ValuesController:
+[Authorize]
+
+CourtDev.Web.csproj
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.AzureAD.UI" Version="2.2.0" />
+
+dotnet restore
+
+appsettings.json
+"AzureAd": {
+    "Instance": "https://login.microsoftonline.com/",
+    "Domain": "smartimagesoft.com",
+    "TenantId": "97d2e4ae-a025-45c8-8441-6a36f9a2782c",
+    "ClientId": "e639e961-fc25-4e55-baf3-5ca061ce27c9"
+  },

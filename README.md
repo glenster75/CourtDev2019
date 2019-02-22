@@ -1,5 +1,5 @@
 # CourtDev 2019
-CourtDev 2019 LA Workshop
+### CourtDev 2019 LA Workshop
 
 ## Dependencies:
 * Dotnet Core 2.2:
@@ -17,5 +17,3 @@ CourtDev 2019 LA Workshop
 * The latest version of Angular CLI:
     * Type the following in your terminal:
     > npm i -g @angular/cli
-
-
